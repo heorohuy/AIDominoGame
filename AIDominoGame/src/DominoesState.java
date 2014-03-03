@@ -1,7 +1,5 @@
 import java.util.ArrayList;
-
-//test
-
+import java.util.Random;
 
 public class DominoesState {
 
@@ -10,7 +8,7 @@ public class DominoesState {
 	private ArrayList<ArrayList<Pair>> playerHands = new ArrayList<ArrayList<Pair>>();
 	private int currentTurn = 0;
 	private int passes = 0;
-	private ArrayList<PieceTracker> trackers = new ArrayList<PieceTracker>(); 
+	private ArrayList<PieceTracker> trackers = new ArrayList<PieceTracker>();
 
 	public DominoesState(Pair endPoints, ArrayList<Pair> playedTiles,
 			ArrayList<ArrayList<Pair>> playerHands, int currentTurn, 
@@ -20,7 +18,38 @@ public class DominoesState {
 		this.currentTurn = currentTurn;
 		this.passes = passes;
 		this.playedTiles = playedTiles;
-		this.playerHands = playerHands;
+		if(playedTiles.isEmpty()){
+			playerHands = initHands();
+		}else{
+			this.playerHands = playerHands;
+		}
+
+	}
+
+	private ArrayList<ArrayList<Pair>> initHands(){
+		Random rand = new Random();
+		ArrayList<ArrayList<Pair>> firstHands = new ArrayList<ArrayList<Pair>>();
+		ArrayList<Pair> tileSet = new ArrayList<Pair>();
+		int num;
+		Pair temp;
+		for(int i = 0; i < 7; i++)
+			for(int j = 0; j < 7; j++)
+				if(!tileSet.contains(new Pair(i,j)))
+					tileSet.add(new Pair(i,j));
+		for(int j = 0; j < tileSet.size(); j++){
+			for(int k = 0; k < tileSet.size(); k++){
+				num = rand.nextInt(tileSet.size());
+				temp = tileSet.get(k);
+				tileSet.set(k,tileSet.get(num));
+				tileSet.set(num,temp);
+			}
+		}
+		for(Pair tile : tileSet){
+			for(int l = 0; l < 4; l++){
+				firstHands.get(l).add(tile);
+			}
+		}
+		return firstHands;
 	}
 
 	public ArrayList<Pair> getHand(int player){
