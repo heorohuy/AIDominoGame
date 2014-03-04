@@ -4,7 +4,12 @@ import java.util.Random;
 
 public class RandomPlayer implements IPlayer {
 
-	private Random rand = new Random();
+	private Random rand;
+	
+	public RandomPlayer(Random rand)
+	{
+		this.rand = rand;
+	}
 	
 	@Override
 	public MoveData getMove(DominoesState state) {
