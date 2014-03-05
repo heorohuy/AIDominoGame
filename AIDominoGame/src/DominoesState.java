@@ -74,7 +74,7 @@ public class DominoesState {
 			if(move.getEndPoint() == -1){
 				for(int i = 0; i < 4; i++)
 					if(i != currentTurn)
-						nextTrackers.add(trackers.get(i).playerPassed(currentTurn, endPoints));
+						nextTrackers.add(trackers.get(i).playerPassed(currentTurn, endPoints, playerHands));
 				return new DominoesState(endPoints, playedTiles, 
 						playerHands, currentTurn+1, passes+1, nextTrackers);
 			}
@@ -93,7 +93,7 @@ public class DominoesState {
 			nextPlayerHands.get(currentTurn).remove(move.getTile());
 
 			for(int i = 0; i < 4; i++)
-				nextTrackers.add(trackers.get(i).tilePlayed(move.getTile()));
+				nextTrackers.add(trackers.get(i).tilePlayed(move.getTile(),playerHands));
 
 			return new DominoesState(nextEndPoints, nextPlayedTiles,
 					nextPlayerHands, (currentTurn + 1)&3, 0, nextTrackers);

@@ -39,22 +39,24 @@ public class PieceTracker {
 		return nextCandidates;
 	}
 
-	public PieceTracker tilePlayed(Pair tile){
+	public PieceTracker tilePlayed(Pair tile, ArrayList<ArrayList<Pair>> hands){
 		PieceTracker nextCandidates = this.clone();
 		for(int i = 0; i < 4; i++)
 			nextCandidates.candidates.get(i).remove(tile);
-		
+		this.updateHands(hands);
+
 		return nextCandidates;
 	}
 
-	public PieceTracker playerPassed(int turn, Pair endPoints){
+	public PieceTracker playerPassed(int player, Pair endPoints, ArrayList<ArrayList<Pair>> hands){
 		PieceTracker nextCandidates = this.clone();
-		for(Pair tile : nextCandidates.candidates.get(turn)){
+		for(Pair tile : nextCandidates.candidates.get(player)){
 			if(tile.canConnect(endPoints.getX()) || tile.canConnect(endPoints.getY())){
-				nextCandidates.candidates.get(turn).remove(tile);
+				nextCandidates.candidates.get(player).remove(tile);
 			}
 		}
-		
+		this.updateHands(hands);
+
 		return nextCandidates;
 	}
 
@@ -62,15 +64,19 @@ public class PieceTracker {
 	public ArrayList<Pair> getPossiblePlayerHand(int player){
 		return (ArrayList<Pair>) candidates.get(player).clone();
 	}
-	
-	private void updateHands(int player){
-		for(Pair tile : candidates.get(player)){
-			for(int i = 0; i < 4; i++){
-				if(i != player){
-					candidates.get(i).remove(tile);
+
+	private void updateHands(ArrayList<ArrayList<Pair>> hands){
+		for(int i = 0; i < 4; i++){
+			if(candidates.get(i).size() == hands.get(i).size()){
+				for(int j = 0; j < 4; j++){
+					if(i != j){
+						for(Pair tile : candidates.get(i)){
+							candidates.get(j).remove(tile);
+						}
+					}
 				}
 			}
 		}
 	}
-	
+
 }
