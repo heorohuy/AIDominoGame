@@ -6,6 +6,8 @@ public class PieceTracker {
 	private ArrayList<ArrayList<Pair>> candidates = new ArrayList<ArrayList<Pair>>();
 
 	public PieceTracker(){
+		for(int i = 0; i < 4; i++)
+			candidates.add(new ArrayList<Pair>());
 		for(int i = 0; i < 7; i++)
 			for(int j = i; j < 7; j++)
 				for(int k = 0; k < 4 ; k++)
@@ -50,7 +52,7 @@ public class PieceTracker {
 
 	public PieceTracker playerPassed(int player, Pair endPoints, ArrayList<ArrayList<Pair>> hands){
 		PieceTracker nextCandidates = this.clone();
-		for(Pair tile : nextCandidates.candidates.get(player)){
+		for(Pair tile : this.candidates.get(player)){
 			if(tile.canConnect(endPoints.getX()) || tile.canConnect(endPoints.getY())){
 				nextCandidates.candidates.get(player).remove(tile);
 			}

@@ -9,13 +9,14 @@ public class DominoesState {
 	private int currentTurn = 0;
 	private int passes = 0;
 	private ArrayList<PieceTracker> trackers = new ArrayList<PieceTracker>();
-	
+
 	public DominoesState(Random rand){
 		playerHands = initHands(rand);
 		for(int i = 0; i < 4; i++){
 			trackers.add(new PieceTracker());
 			trackers.get(i).removeHand(playerHands.get(i),i);//Possible Bug
 		}
+		endPoints = new Pair(-2,-2);
 	}
 
 	public DominoesState(Pair endPoints, ArrayList<Pair> playedTiles,
@@ -31,8 +32,10 @@ public class DominoesState {
 	}
 
 	private static ArrayList<ArrayList<Pair>> initHands(Random rand){
-		
+
 		ArrayList<ArrayList<Pair>> firstHands = new ArrayList<ArrayList<Pair>>();
+		for(int i = 0; i < 4; i++)
+			firstHands.add(new ArrayList<Pair>());
 		ArrayList<Pair> tileSet = new ArrayList<Pair>();
 		int num;
 		Pair temp;
@@ -69,20 +72,24 @@ public class DominoesState {
 		ArrayList<Pair> nextPlayedTiles = new ArrayList<Pair>();
 		Pair nextEndPoints;
 		ArrayList<PieceTracker> nextTrackers = new ArrayList<PieceTracker>();
-		
+
 		if(isMoveLegal(move)){
 			if(move.getEndPoint() == -1){
 				for(int i = 0; i < 4; i++)
 					if(i != currentTurn)
-						nextTrackers.add(trackers.get(i).playerPassed(currentTurn, endPoints, playerHands));
+						for(int j = 0; j < 3; j++)
+							nextTrackers.add(trackers.get(i).playerPassed(currentTurn, endPoints, playerHands));
 				return new DominoesState(endPoints, playedTiles, 
-						playerHands, currentTurn+1, passes+1, nextTrackers);
+						playerHands, (currentTurn + 1)&3, passes+1, nextTrackers);
 			}
-
-			if(move.getEndPoint() == endPoints.getX()){
-				nextEndPoints = new Pair(endPoints.getY(),move.getTile().getOtherSide(move.getEndPoint()));
+			if(move.getEndPoint() == -2){
+				nextEndPoints = new Pair(move.getTile().getX(), move.getTile().getY());
 			}else{
-				nextEndPoints = new Pair(endPoints.getX(),move.getTile().getOtherSide(move.getEndPoint()));
+				if(move.getEndPoint() == endPoints.getX()){
+					nextEndPoints = new Pair(endPoints.getY(),move.getTile().getOtherSide(move.getEndPoint()));
+				}else{
+					nextEndPoints = new Pair(endPoints.getX(),move.getTile().getOtherSide(move.getEndPoint()));
+				}
 			}
 
 			nextPlayedTiles = (ArrayList<Pair>)playedTiles.clone();
@@ -93,7 +100,9 @@ public class DominoesState {
 			nextPlayerHands.get(currentTurn).remove(move.getTile());
 
 			for(int i = 0; i < 4; i++)
-				nextTrackers.add(trackers.get(i).tilePlayed(move.getTile(),playerHands));
+				if(i != this.currentTurn)
+					for(int j = 0; j < 3; j++)
+						nextTrackers.add(trackers.get(i).tilePlayed(move.getTile(),playerHands));
 
 			return new DominoesState(nextEndPoints, nextPlayedTiles,
 					nextPlayerHands, (currentTurn + 1)&3, 0, nextTrackers);
@@ -105,6 +114,8 @@ public class DominoesState {
 		ArrayList<MoveData> legalMoves = getLegalMoves();
 		if(move.getEndPoint() == -1){
 			return legalMoves.isEmpty();
+		}else if(move.getEndPoint() == -2){
+			return playedTiles.isEmpty();
 		}else{
 			return legalMoves.contains(move);
 		}

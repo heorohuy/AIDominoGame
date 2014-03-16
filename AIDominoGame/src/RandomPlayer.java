@@ -15,7 +15,7 @@ public class RandomPlayer implements IPlayer {
 	public MoveData getMove(DominoesState state) {
 		ArrayList<MoveData> moves = state.getLegalMoves();
 		if (!moves.isEmpty())
-			return moves.get(rand.nextInt());
+			return moves.get(rand.nextInt(state.getLegalMoves().size()));
 		else 
 			return new MoveData(null, -1);
 	}
