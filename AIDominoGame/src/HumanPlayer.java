@@ -31,8 +31,6 @@ public class HumanPlayer implements IPlayer {
 
 		move = new MoveData(tile, Integer.parseInt(a));
 
-		
-
 		return move;
 	}
 

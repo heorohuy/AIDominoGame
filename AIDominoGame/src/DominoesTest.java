@@ -8,8 +8,7 @@ public class DominoesTest {
 	 */
 	public static void main(String[] args) {
 		Random rand = new Random();
-		DominoesState ds = new DominoesState(rand);
-		GameManager game = new GameManager(ds);
+		GameManager game = new GameManager(rand);
 		HumanPlayer me = new HumanPlayer();
 		RandomPlayer player2 = new RandomPlayer(rand);
 		RandomPlayer player3 = new RandomPlayer(rand);

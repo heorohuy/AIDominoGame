@@ -14,7 +14,7 @@ public class DominoesState {
 		playerHands = initHands(rand);
 		for(int i = 0; i < 4; i++){
 			trackers.add(new PieceTracker());
-			trackers.get(i).removeHand(playerHands.get(i),i);//Possible Bug
+			trackers.set(i,trackers.get(i).removeHand(playerHands.get(i),i));
 		}
 		endPoints = new Pair(-2,-2);
 	}
@@ -55,6 +55,7 @@ public class DominoesState {
 				firstHands.get(k).add(tileSet.get(h));
 			}
 		}
+
 		return firstHands;
 	}
 
@@ -133,6 +134,9 @@ public class DominoesState {
 					(endPoints.getX() != endPoints.getY())){
 				legalMoves.add(new MoveData(tile, endPoints.getY()));
 			}
+			if(endPoints.getX() == -2){
+				legalMoves.add(new MoveData(tile, endPoints.getX()));
+			}
 		}
 		return legalMoves;
 	}
@@ -149,6 +153,27 @@ public class DominoesState {
 		return passes >= 4;
 	}
 
+	public int whoWon(){
+		if(hasGameEnded()){
+			return this.currentTurn;
+		}else{
+			return -1;
+		}
+	}
+
+	public int endScore(){
+		int score = 0;
+		if(hasGameEnded()){
+			for(int i = 0; i < 4; i++){
+				if(i != whoWon())
+					for(Pair tile : playerHands.get(i)){
+						score = score + tile.getX() + tile.getY();
+					}
+			}
+		}
+		return score;
+	}
+
 	public int getPasses() {
 		return passes;
 	}
@@ -159,5 +184,13 @@ public class DominoesState {
 
 	public ArrayList<Pair> getPlayedTiles() {
 		return playedTiles;
+	}
+	
+	public ArrayList<PieceTracker> getTrackers(){
+		return trackers;
+	}
+	
+	public ArrayList<ArrayList<Pair>> getPlayerHands(){
+		return playerHands;
 	}
 }
